@@ -24,13 +24,22 @@ namespace Rich6Extractor
 
         private void ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            textBox1.Clear();
+            textBox2.Clear();
             var f = new OpenFileDialog();
             f.Filter = ".pck文件|*.pck";
             f.ShowDialog();
             if (f.FileName.Length > 0)
             {
                 path = f.FileName;
-                viewer = new Rich6Viewer(path);
+                int v;
+                byte[] header = new byte[8];
+                using (var tempF=File.Open(path, FileMode.Open)){
+                    tempF.Read(header, 0, 8);
+                    if (header[4] == 0x1) v = 6;
+                    else v = 7;
+                }
+                viewer = new Rich6Viewer(path, v);
                 viewer.ReadAll();
                 for (int i = 0; i < viewer.fileName.Count; i++)
                 {
@@ -52,7 +61,9 @@ namespace Rich6Extractor
                 contextMenuStrip1.Show(new Point(MousePosition.X, MousePosition.Y));
             }
             int index = e.Node.Index;
-            textBox2.Text = "Size:" + viewer.fileSize[index] + "  " + "Offset:" + viewer.fileOffset[index] + "  (decimal)";
+            textBox2.Text = ("Size:" + viewer.fileSize[index].ToString("X8") + "  " + 
+                "Offset:" + viewer.fileOffset[index].ToString("X8") + " " +
+                " meta:"+(0x9+0x108*(index-1)).ToString("X8"));
             var encoding = Encoding.GetEncoding(936);
             textBox1.Text = encoding.GetString(viewer.ReadNode(index));
         }
