@@ -26,6 +26,7 @@ namespace Rich6Extractor
         {
             textBox1.Clear();
             textBox2.Clear();
+            treeView1.Nodes.Clear();
             var f = new OpenFileDialog();
             f.Filter = ".pck文件|*.pck";
             f.ShowDialog();

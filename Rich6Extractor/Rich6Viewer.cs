@@ -20,6 +20,7 @@ namespace Rich6Extractor
         public int begin;
         public int stride = 0x108;
         int sizeLen;
+        int fileNum;
 
         public Rich6Viewer(string path,int RichVersion)
         {
@@ -28,10 +29,12 @@ namespace Rich6Extractor
                 case 6:
                     sizeLen = 4;
                     begin = 9;
+                    fileNum = 2143;
                     break;
                 case 7:
                     sizeLen = 4;
                     begin = 8;
+                    fileNum = 3671;
                     break;
                 default:
                     throw new ArgumentException("No Support Rich Version.");
@@ -51,7 +54,7 @@ namespace Rich6Extractor
         public void ReadAll()
         {
             var encoding = Encoding.GetEncoding(936);
-            for (int temp_begin = begin; temp_begin < 0x8a200; temp_begin += stride)
+            for (int temp_begin = begin; temp_begin < 0x108*fileNum; temp_begin += stride)
             {
                 int len = 0;
                 while (mv.ReadByte(temp_begin + len) != 0) len++;
